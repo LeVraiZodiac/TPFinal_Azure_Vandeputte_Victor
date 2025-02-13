@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Request, Response} from "express";
 import multer from "multer";
 import path from "path";
 import cors from "cors";
@@ -38,18 +38,21 @@ app.get("/", (req, res) => {
   `);
 });
 
-app.post("/submit", upload.single("image"), async (req, res) => {
+app.post("/submit", upload.single("image"), (req: Request, res: Response) : void => {
     try {
         if (!req.file) {
-            return res.status(400).send("Aucun fichier envoyé.");
+            res.status(400).send("Aucun fichier envoyé.");
         }
 
         res.send("Image envoyée avec succès !");
-    } catch (error) {
-        console.error("Erreur lors de l'envoi du message:", error);
-        res.status(500).send(
-            "Erreur lors de l'envoi du message: " + error.message,
-        );
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Erreur lors de l'envoi du message:", error.message);
+            res.status(500).send("Erreur lors de l'envoi du message: " + error.message);
+        } else {
+            console.error("Erreur inconnue:", error);
+            res.status(500).send("Erreur inconnue.");
+        }
     }
 });
 
