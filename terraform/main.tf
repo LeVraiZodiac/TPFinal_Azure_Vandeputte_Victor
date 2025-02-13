@@ -55,27 +55,27 @@ resource "azurerm_storage_queue" "queue" {
   storage_account_name = azurerm_storage_account.storage.name
 }
 
-resource "azurerm_container_group" "aci" {
-  name                = "my-final-image-processor"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  os_type            = "Linux"
+# resource "azurerm_container_group" "aci" {
+#   name                = "my-final-image-processor"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   location            = azurerm_resource_group.rg.location
+#   os_type            = "Linux"
 
-  container {
-    name   = "image-processor"
-    image  = "monregistry.azurecr.io/image-processor:latest"
-    cpu    = "0.5"
-    memory = "1.5"
+#   container {
+#     name   = "image-processor"
+#     image  = "monregistry.azurecr.io/image-processor:latest"
+#     cpu    = "0.5"
+#     memory = "1.5"
 
-    environment_variables = {
-      "QUEUE_NAME"          = azurerm_storage_queue.queue.name
-      "STORAGE_ACCOUNT"     = azurerm_storage_account.storage.name
-      "AZURE_FUNCTION_URL"  = "https://monfunction.azurewebsites.net/api/process"
-    }
-  }
+#     environment_variables = {
+#       "QUEUE_NAME"          = azurerm_storage_queue.queue.name
+#       "STORAGE_ACCOUNT"     = azurerm_storage_account.storage.name
+#       "AZURE_FUNCTION_URL"  = "https://monfunction.azurewebsites.net/api/process"
+#     }
+#   }
 
-  restart_policy = "Never"
-}
+#   restart_policy = "Never"
+# }
 
 output "webapp_url" {
   value = azurerm_linux_web_app.web_app.default_hostname
