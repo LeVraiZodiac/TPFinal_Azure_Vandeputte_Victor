@@ -18,17 +18,14 @@ jobs:
         with:
           node-version: 20
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Install dependencies
-        run: yarn install
+        run: npm install
 
-      - name: Check yarn version
-        run: yarn --version
+      - name: Check npm version
+        run: npm --version
 
       - name: Build application
-        run: yarn build
+        run: npm run build
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
