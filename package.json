@@ -1,0 +1,21 @@
+{
+  "name": "tpfinal",
+  "packageManager": "yarn@4.6.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@azure/storage-queue": "^12.8.0",
+    "@eslint/js": "^9.20.0",
+    "@types/node": "^22.13.1",
+    "dotenv": "^16.4.7",
+    "eslint": "^9.20.1",
+    "express": "^4.17.1",
+    "multer": "^1.4.5-lts.1",
+    "path": "^0.12.7",
+    "prettier": "^3.5.0"
+  },
+  "scripts": {
+    "wstyle": "prettier --write src",
+    "static": "eslint src/"
+  }
+}
