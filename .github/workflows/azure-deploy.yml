@@ -37,4 +37,4 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: my-final-web-app-2
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F18629AF553247E2BDF76C38CF781AA4 }}
