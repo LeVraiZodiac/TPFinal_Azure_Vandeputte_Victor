@@ -160,8 +160,43 @@ resource "azurerm_application_gateway" "app_gateway" {
   }
 }
 
+resource "azurerm_mssql_server" "sql_server" {
+  name                         = "my-final-sql-server"
+  resource_group_name          = azurerm_resource_group.rg.name
+  location                     = azurerm_resource_group.rg.location
+  version                      = "12.0"
+  administrator_login          = "sqladmin"
+  administrator_login_password = "SecureP@ssw0rd!"
+
+  azuread_administrator {
+    login_username = "adminuser"
+    object_id      = "cc39aed2-3c3a-4ee3-9b03-67b41165aba5"
+  }
+}
+
+resource "azurerm_mssql_database" "database" {
+  name           = "myfinaldatabase"
+  server_id      = azurerm_mssql_server.sql_server.id
+  collation      = "SQL_Latin1_General_CP1_CI_AS"
+  license_type   = "LicenseIncluded"
+  max_size_gb    = 2
+  sku_name       = "Basic"
+}
+
+resource "azurerm_storage_container" "input_images" {
+  name                  = "input-images"
+  storage_account_name  = azurerm_storage_account.storage.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "processed_images" {
+  name                  = "processed-images"
+  storage_account_name  = azurerm_storage_account.storage.name
+  container_access_type = "private"
+}
+
 resource "azurerm_storage_account" "storage" {
-  name                     = "myfinalstorage"
+  name                     = "myverybigfinalstorage"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
@@ -179,6 +214,35 @@ resource "azurerm_storage_queue" "queue" {
   name                 = "image-processing-queue"
   storage_account_name = azurerm_storage_account.storage.name
 }
+
+resource "azurerm_linux_function_app" "image_processor_function" {
+  name                = "my-final-function-app"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  
+  service_plan_id     = azurerm_service_plan.app_plan.id
+  
+  storage_account_name       = azurerm_storage_account.storage.name
+  storage_account_access_key = azurerm_storage_account.storage.primary_access_key
+
+  site_config {
+    application_stack {
+      python_version = "3.9"
+    }
+    always_on = false
+  }
+
+  app_settings = {
+    "FUNCTIONS_WORKER_RUNTIME" = "python"
+    "AzureWebJobsStorage"      = azurerm_storage_account.storage.primary_connection_string
+  }
+}
+
+resource "azurerm_storage_table" "processing_history" {
+  name                 = "ProcessingHistory"
+  storage_account_name = azurerm_storage_account.storage.name
+}
+
 
 output "webapp_url" {
   value = azurerm_linux_web_app.web_app.default_hostname
@@ -200,4 +264,8 @@ output "web_app_name_2" {
 
 output "application_gateway_ip" {
   value = azurerm_public_ip.pip.ip_address
+}
+
+output "database_name" {
+  value = azurerm_mssql_database.database.name
 }
