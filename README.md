@@ -188,11 +188,3 @@ Common issues and solutions:
 2. Permissions: Verify Azure credentials
 3. Resource limits: Check subscription quotas
 4. Deployment errors: Review terraform plan output
-
-## Contributing
-
-Feel free to submit issues and enhancement requests.
-
-## License
-
-[Specify your license here]
